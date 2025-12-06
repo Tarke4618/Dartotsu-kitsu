@@ -213,6 +213,14 @@ jobs:
           done
           ls build/app/outputs/flutter-apk
 
+      - name: Upload Android Artifacts
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: Dartotsu-Kitsu_Android_${{github.ref_name}}
+          path: build/app/outputs/flutter-apk/*.apk
+          retention-days: 7
+
   build_windows:
     runs-on: windows-latest
     if: |
