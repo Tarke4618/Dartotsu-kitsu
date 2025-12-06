@@ -56,7 +56,8 @@ class KitsuController extends BaseServiceData {
         expiry: expiry,
       );
 
-      _fetchUserId();
+      token.value = accessToken;
+      _fetchUserProfile();
       _registerWithBridgeSync();
 
       Logger.log('KitsuController: Restored saved token');
@@ -76,6 +77,9 @@ class KitsuController extends BaseServiceData {
   void removeSavedToken() {
     _api.clearTokens();
     _userId = null;
+    token.value = '';
+    username.value = '';
+    avatar.value = '';;
     removeCustomData<Map<String, dynamic>>('kitsu_token');
     Logger.log('KitsuController: Token removed');
   }
@@ -89,7 +93,8 @@ class KitsuController extends BaseServiceData {
     final success = await _api.refreshAccessToken();
     if (success) {
       await _saveTokenData();
-      await _fetchUserId();
+      token.value = _api.accessToken ?? '';
+      await _fetchUserProfile();
       _registerWithBridgeSync();
     } else {
       removeSavedToken();
@@ -105,9 +110,18 @@ class KitsuController extends BaseServiceData {
     saveCustomData('kitsu_token', tokenData);
   }
 
-  Future<void> _fetchUserId() async {
-    _userId = await _api.getCurrentUserId();
-    Logger.log('KitsuController: User ID: $_userId');
+  Future<void> _fetchUserProfile() async {
+    final profile = await _api.getCurrentUserProfile();
+    if (profile != null) {
+      _userId = profile.id;
+      username.value = profile.name;
+      if (profile.avatar != null) {
+        avatar.value = profile.avatar!;
+      }
+      Logger.log('KitsuController: User Profile: ${_userId} - ${username.value}');
+    } else {
+      Logger.log('KitsuController: Failed to fetch profile');
+    }
   }
 
   void _registerWithBridgeSync() {
@@ -318,7 +332,8 @@ class KitsuController extends BaseServiceData {
 
                     if (result.success) {
                       await _saveTokenData();
-                      await _fetchUserId();
+                      token.value = _api.accessToken ?? '';
+                      await _fetchUserProfile();
                       _registerWithBridgeSync();
                       
                       if (dialogContext.mounted) {
@@ -405,7 +420,8 @@ class KitsuController extends BaseServiceData {
               
               if (result.success) {
                 await _saveTokenData();
-                await _fetchUserId();
+                token.value = _api.accessToken ?? '';
+                await _fetchUserProfile();
                 _registerWithBridgeSync();
                 onSuccess();
               } else {

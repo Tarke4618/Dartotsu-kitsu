@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 
 import '../../Api/Anilist/Anilist.dart';
 import '../../Api/Discord/Discord.dart';
+import '../../Api/Kitsu/KitsuData.dart';
 import '../../Api/MyAnimeList/Mal.dart';
 import '../../Api/Simkl/Simkl.dart';
 import '../../Theme/LanguageSwitcher.dart';
@@ -37,6 +38,21 @@ class SettingsAccountScreenState extends BaseSettingsScreen {
 
   List<Widget> _buildSettings(BuildContext context) {
     return [
+      _buildAccountSection(
+        context,
+        iconPath: 'assets/svg/kitsu.svg',
+        title: getString.kitsu,
+        isLoggedIn: Kitsu.token,
+        username: Kitsu.username,
+        avatarUrl: Kitsu.avatar,
+        onLogOut: () => AlertDialogBuilder(context)
+          ..setTitle(getString.logout(getString.kitsu))
+          ..setMessage(getString.confirmLogout)
+          ..setPositiveButton(getString.yes, Kitsu.removeSavedToken)
+          ..setNegativeButton(getString.no, null)
+          ..show(),
+        onLogIn: () => Kitsu.login(context),
+      ),
       _buildAccountSection(
         context,
         iconPath: 'assets/svg/anilist.svg',

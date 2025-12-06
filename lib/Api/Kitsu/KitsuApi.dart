@@ -202,8 +202,8 @@ class KitsuApi {
     }
   }
 
-  /// Get current user's ID
-  Future<String?> getCurrentUserId() async {
+  /// Get current user's profile
+  Future<KitsuUserProfile?> getCurrentUserProfile() async {
     if (!isAuthenticated) return null;
 
     try {
@@ -219,7 +219,7 @@ class KitsuApi {
       final users = data['data'] as List;
       if (users.isEmpty) return null;
 
-      return users.first['id'];
+      return KitsuUserProfile.fromJson(users.first);
     } catch (e) {
       Logger.log('KitsuApi: Get user error: $e');
       return null;
@@ -426,6 +426,30 @@ class KitsuLibraryEntry {
       id: json['id'],
       progress: attributes['progress'] ?? 0,
       status: attributes['status'] ?? 'current',
+    );
+  }
+}
+
+/// Kitsu user profile
+class KitsuUserProfile {
+  final String id;
+  final String name;
+  final String? avatar;
+
+  KitsuUserProfile({
+    required this.id,
+    required this.name,
+    this.avatar,
+  });
+
+  factory KitsuUserProfile.fromJson(Map<String, dynamic> json) {
+    final attributes = json['attributes'] ?? {};
+    final avatarImage = attributes['avatar'];
+
+    return KitsuUserProfile(
+      id: json['id'],
+      name: attributes['name'] ?? 'Unknown',
+      avatar: avatarImage?['medium'] ?? avatarImage?['small'] ?? avatarImage?['tiny'] ?? avatarImage?['original'],
     );
   }
 }
