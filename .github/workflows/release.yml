@@ -150,9 +150,11 @@ jobs:
             ${{ runner.os }}-flutter-
 
       - name: Set up Signing Tool
+        env:
+          PFX_BASE64: ${{ secrets.PFX_FILE }}
         run: |
           mkdir $env:USERPROFILE\certs
-          [System.IO.File]::WriteAllBytes("$env:USERPROFILE\certs\Dartotsu.pfx", [Convert]::FromBase64String("${{secrets.PFX_FILE}}"))
+          [System.IO.File]::WriteAllBytes("$env:USERPROFILE\certs\Dartotsu.pfx", [Convert]::FromBase64String($env:PFX_BASE64))
       # Create .env:
       - name: Setup env File
         env:
@@ -203,8 +205,14 @@ jobs:
           echo "signtool_path=$signtoolPath" >> $env:GITHUB_OUTPUT
 
       - name: Build and Sign Setup
+        env:
+          PFX_PASSWORD: ${{ secrets.PFX_PASSWORD }}
         run: |
-          & dart run inno_bundle:build --sign-tool-params '"${{ steps.find_signtool.outputs.signtool_path }}" sign /fd sha256 /f "C:\Users\runneradmin\certs\Dartotsu.pfx" /p "${{secrets.PFX_PASSWORD}}" /tr http://timestamp.digicert.com /td sha256 /v $f' --release
+          $signtool = "${{ steps.find_signtool.outputs.signtool_path }}"
+          $cert = "C:\Users\runneradmin\certs\Dartotsu.pfx"
+          $pass = $env:PFX_PASSWORD
+          $params = "`"$signtool`" sign /fd sha256 /f `"$cert`" /p `"$pass`" /tr http://timestamp.digicert.com /td sha256 /v `$f"
+          & dart run inno_bundle:build --sign-tool-params $params --release
       - name: Release Windows Zip
         uses: softprops/action-gh-release@master
         with:
