@@ -178,19 +178,19 @@ jobs:
       - run: flutter clean
       - run: flutter pub get
       - run: dart run build_runner build --delete-conflicting-outputs
-      - run: flutter build apk --release --split-per-abi
-      - run: flutter build apk --release
+      - run: flutter build apk --debug --split-per-abi
+      - run: flutter build apk --debug
 
       - name: Rename APKs
         run: |
-          for file in build/app/outputs/flutter-apk/app-*-release.apk; do
-            abi=$(basename $file | sed 's/app-\(.*\)-release.apk/\1/')
+          for file in build/app/outputs/flutter-apk/app-*-debug.apk; do
+            abi=$(basename $file | sed 's/app-\(.*\)-debug.apk/\1/')
             mv $file build/app/outputs/flutter-apk/Dartotsu_Android_${abi}_${{github.ref_name}}.apk
           done
           ls build/app/outputs/flutter-apk
 
       - name: Rename universal APK
-        run: mv build/app/outputs/flutter-apk/app-release.apk build/app/outputs/flutter-apk/Dantotsu_Android_universal_${{github.ref_name}}.apk
+        run: mv build/app/outputs/flutter-apk/app-debug.apk build/app/outputs/flutter-apk/Dantotsu_Android_universal_${{github.ref_name}}.apk
 
       - name: Upload arm64 File To Google Drive
         id: gdriveUpload_arm64
