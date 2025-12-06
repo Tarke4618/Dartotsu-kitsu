@@ -157,11 +157,6 @@ jobs:
             ~/.gradle/caches
             ~/.gradle/wrapper
           key: clean-v1-${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: clean-v1-${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
 
       - name: Setup cmake
         uses: jwlawson/actions-setup-cmake@v2
@@ -280,7 +275,7 @@ jobs:
 
       - name: Build and Sign Setup
         run: |
-          & dart run inno_bundle:build --sign-tool-params '\"${{ steps.find_signtool.outputs.signtool_path }}\" sign /fd sha256 /f \"C:\Users\runneradmin\certs\Dartotsu.pfx\" /p \"${{secrets.PFX_PASSWORD}}\" /tr http://timestamp.digicert.com /td sha256 /v $f' --release
+          & dart run inno_bundle:build --sign-tool-params '"${{ steps.find_signtool.outputs.signtool_path }}" sign /fd sha256 /f "C:\Users\runneradmin\certs\Dartotsu.pfx" /p "${{secrets.PFX_PASSWORD}}" /tr http://timestamp.digicert.com /td sha256 /v $f' --release
 
       - name: Upload Windows Installer
         uses: actions/upload-artifact@v4
@@ -427,6 +422,7 @@ jobs:
         continue-on-error: true
 
       - name: Get Commits Since Last Run
+        id: set_output
         run: |
           if [ -f last_sha.txt ]; then
             LAST_SHA=$(cat last_sha.txt)
@@ -438,4 +434,5 @@ jobs:
           COMMIT_LOGS="${COMMIT_LOGS//'%'/'%25'}"
           COMMIT_LOGS="${COMMIT_LOGS//$'\n'/'%0A'}"
           COMMIT_LOGS="${COMMIT_LOGS//$'\r'/'%0D'}"
+          echo "commit_logs=$COMMIT_LOGS" >> $GITHUB_OUTPUT
         shell: bash
