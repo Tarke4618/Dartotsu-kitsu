@@ -61,6 +61,13 @@ jobs:
           flutter-version: ${{ env.FLUTTER_VERSION }}
           cache: true
 
+      - &add_flutter_to_path
+        name: Add Flutter to PATH
+        shell: bash
+        run: |
+          echo "$FLUTTER_ROOT/bin" >> $GITHUB_PATH
+          echo "$PUB_CACHE/bin" >> $GITHUB_PATH
+
       - &cache_flutter_normal
         name: Cache Flutter dependencies (normal)
         if: ${{ !contains(github.event.head_commit.message, '[clean]') && !inputs.clean_build }}
@@ -113,6 +120,7 @@ jobs:
       - *checkout
       - *prepare_flutter
       - *setup_flutter
+      - *add_flutter_to_path
       - *cache_flutter_normal
       - *cache_flutter_clean
 
@@ -265,6 +273,7 @@ jobs:
       - *setup_env
       - *prepare_flutter
       - *setup_flutter
+      - *add_flutter_to_path
       - *cache_flutter_normal
       - *cache_flutter_clean
       - name: Setup NuGet.exe for use with actions
@@ -329,6 +338,7 @@ jobs:
       - *checkout
       - *prepare_flutter
       - *setup_flutter
+      - *add_flutter_to_path
 
       - name: Install system dependencies
         run: |
@@ -374,6 +384,7 @@ jobs:
       - *checkout
       - *prepare_flutter
       - *setup_flutter
+      - *add_flutter_to_path
       - *cache_flutter_normal
       - *cache_flutter_clean
       - *setup_env
@@ -415,6 +426,7 @@ jobs:
       - *checkout
       - *prepare_flutter
       - *setup_flutter
+      - *add_flutter_to_path
       - *cache_flutter_normal
       - *cache_flutter_clean
       - *setup_env
