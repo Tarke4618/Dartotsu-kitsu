@@ -61,14 +61,6 @@ jobs:
           flutter-version: ${{ env.FLUTTER_VERSION }}
           cache: true
 
-      - &add_flutter_to_path
-        name: Add Flutter to PATH
-        shell: bash
-        run: |
-          echo "${{ steps.setup-flutter.outputs.flutter-root }}/bin" >> $GITHUB_PATH
-          echo "${{ steps.setup-flutter.outputs.pub-cache-path }}/bin" >> $GITHUB_PATH
-          echo "Flutter root: ${{ steps.setup-flutter.outputs.flutter-root }}"
-
       - &cache_flutter_normal
         name: Cache Flutter dependencies (normal)
         if: ${{ !contains(github.event.head_commit.message, '[clean]') && !inputs.clean_build }}

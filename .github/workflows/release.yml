@@ -81,11 +81,11 @@ jobs:
           echo "SIMKL_SECRET= $SIMKL_SECRET" > .env
 
       # Optimize Flutter build
-      - run: flutter clean
-      - run: flutter pub get
-      - run: dart run build_runner build --delete-conflicting-outputs
-      - run: flutter build apk --release --split-per-abi
-      - run: flutter build apk --release
+      - run: $FLUTTER_ROOT/bin/flutter clean
+      - run: $FLUTTER_ROOT/bin/flutter pub get
+      - run: $FLUTTER_ROOT/bin/dart run build_runner build --delete-conflicting-outputs
+      - run: $FLUTTER_ROOT/bin/flutter build apk --release --split-per-abi
+      - run: $FLUTTER_ROOT/bin/flutter build apk --release
 
       - name: Rename APKs
         run: |
@@ -149,12 +149,12 @@ jobs:
           nuget-version: "latest"
       # Enable Windows desktop support
       - name: Enable Windows desktop support
-        run: flutter config --enable-windows-desktop
+        run: $env:FLUTTER_ROOT\bin\flutter config --enable-windows-desktop
 
-      - run: flutter clean
+      - run: $env:FLUTTER_ROOT\bin\flutter clean
 
       # Get dependencies with cached packages
-      - run: flutter pub get
+      - run: $env:FLUTTER_ROOT\bin\flutter pub get
 
       - name: Extract Version
         id: get_version
@@ -164,7 +164,7 @@ jobs:
 
       - name: Build and Sign Setup
         run: |
-          dart run inno_bundle:build --sign-tool-params '"C:\Program Files (x86)\Windows Kits\10\bin\10.0.19041.0\x64\signtool.exe" sign /fd sha256 /f "C:\Users\runneradmin\certs\Dartotsu.pfx" /p "${{secrets.PFX_PASSWORD}}" /t http://timestamp.digicert.com /v $f' --release
+          & $env:FLUTTER_ROOT\bin\dart run inno_bundle:build --sign-tool-params '\"C:\Program Files (x86)\Windows Kits\10\bin\10.0.19041.0\x64\signtool.exe\" sign /fd sha256 /f \"C:\Users\runneradmin\certs\Dartotsu.pfx\" /p \"${{secrets.PFX_PASSWORD}}\" /t http://timestamp.digicert.com /v $f' --release
       - name: Release Windows Zip
         uses: softprops/action-gh-release@master
         with:
@@ -203,11 +203,11 @@ jobs:
 
       # Step 5: Fetch Flutter dependencies
       - name: Fetch Flutter dependencies
-        run: flutter pub get
+        run: $FLUTTER_ROOT/bin/flutter pub get
 
       # Step 6: Build the Linux application
       - name: Build Flutter Linux app
-        run: flutter build linux
+        run: $FLUTTER_ROOT/bin/flutter build linux
 
       # Step 7: Archive the app
       - name: Archive app
@@ -247,11 +247,11 @@ jobs:
 
       # Step 3 Get Dependencies
       - name: Get Dependencies
-        run: flutter pub get
+        run: $FLUTTER_ROOT/bin/flutter pub get
       #Step 4 Build app for iOS
       - name: Build iOS
         run: |
-          flutter build ios --release --no-codesign
+          $FLUTTER_ROOT/bin/flutter build ios --release --no-codesign
           cd build/ios/iphoneos
           mkdir -p Payload
           cd Payload
@@ -285,9 +285,9 @@ jobs:
           echo "SIMKL_SECRET= $SIMKL_SECRET" > .env
         shell: bash
       - name: Get Dependencies
-        run: flutter pub get
+        run: $FLUTTER_ROOT/bin/flutter pub get
       - name: Build macOS
-        run: flutter build macos --release
+        run: $FLUTTER_ROOT/bin/flutter build macos --release
       - name: Create DMG file for macOS Build
         run: |
           mkdir -p build/macos/Release
