@@ -23,18 +23,6 @@ jobs:
         with:
           fetch-depth: 0
 
-      # Cache Gradle dependencies
-      - name: Cache Gradle packages
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-
-      # Free up disk space to prevent "No space left on device" error
       - name: Free Disk Space
         run: |
           sudo rm -rf /usr/share/dotnet
@@ -55,6 +43,19 @@ jobs:
           sudo apt-get clean
           sudo apt-get autoremove -y
           df -h
+
+      # Cache Gradle dependencies
+      - name: Cache Gradle packages
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      # Free up disk space to prevent "No space left on device" error
 
       # Setup Cmake
       - name: Setup cmake
@@ -108,8 +109,8 @@ jobs:
           echo "SIMKL_SECRET= $SIMKL_SECRET" > .env
 
       # Optimize Flutter build
-      - run: $FLUTTER_ROOT/bin/flutter clean
-      - run: $FLUTTER_ROOT/bin/flutter pub get
+      - run: flutter clean
+      - run: flutter pub get
       - run: $FLUTTER_ROOT/bin/dart run build_runner build --delete-conflicting-outputs
       - run: $FLUTTER_ROOT/bin/flutter build apk --release --split-per-abi
       - name: Rename APKs
@@ -171,7 +172,7 @@ jobs:
           nuget-version: "latest"
       # Enable Windows desktop support
       - name: Enable Windows desktop support
-        run: $env:FLUTTER_ROOT\bin\flutter config --enable-windows-desktop
+        run: flutter config --enable-windows-desktop
 
       - run: $env:FLUTTER_ROOT\bin\flutter clean
 
@@ -186,7 +187,7 @@ jobs:
 
       - name: Build and Sign Setup
         run: |
-          & $env:FLUTTER_ROOT\bin\dart run inno_bundle:build --sign-tool-params '\"C:\Program Files (x86)\Windows Kits\10\bin\10.0.19041.0\x64\signtool.exe\" sign /fd sha256 /f \"C:\Users\runneradmin\certs\Dartotsu.pfx\" /p \"${{secrets.PFX_PASSWORD}}\" /t http://timestamp.digicert.com /v $f' --release
+          & flutter run inno_bundle:build --sign-tool-params '\"${{ steps.find_signtool.outputs.signtool_path }}\" sign /fd sha256 /f \"C:\Users\runneradmin\certs\Dartotsu.pfx\" /p \"${{secrets.PFX_PASSWORD}}\" /tr http://timestamp.digicert.com /td sha256 /v $f' --release
       - name: Release Windows Zip
         uses: softprops/action-gh-release@master
         with:

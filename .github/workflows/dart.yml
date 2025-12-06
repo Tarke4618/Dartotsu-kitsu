@@ -132,11 +132,6 @@ jobs:
       - name: Cache Gradle dependencies (clean)
         if: contains(github.event.head_commit.message, '[clean]') || inputs.clean_build
         uses: actions/cache@v4
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: clean-v1-${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
 
       # Free up disk space to prevent "No space left on device" error
       - name: Free Disk Space
@@ -159,6 +154,29 @@ jobs:
           sudo apt-get clean
           sudo apt-get autoremove -y
           df -h
+
+      - *cache_flutter_normal
+      - *cache_flutter_clean
+
+      - name: Cache Gradle dependencies (normal)
+        if: ${{ !contains(github.event.head_commit.message, '[clean]') && !inputs.clean_build }}
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: v1-${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            v1-${{ runner.os }}-gradle-
+            clean-v1-${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+      - name: Cache Gradle dependencies (clean)
+        if: contains(github.event.head_commit.message, '[clean]') || inputs.clean_build
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: clean-v1-${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
 
       - name: Setup cmake
         uses: jwlawson/actions-setup-cmake@v2
@@ -247,10 +265,10 @@ jobs:
         with:
           nuget-version: "latest"
       - name: Enable Windows desktop support
-        run: $env:FLUTTER_ROOT\bin\flutter config --enable-windows-desktop
+        run: flutter config --enable-windows-desktop
 
-      - run: $env:FLUTTER_ROOT\bin\flutter clean
-      - run: $env:FLUTTER_ROOT\bin\flutter pub get
+      - run: flutter clean
+      - run: flutter pub get
 
       - name: Extract Version
         id: get_version
@@ -277,7 +295,7 @@ jobs:
 
       - name: Build and Sign Setup
         run: |
-          & $env:FLUTTER_ROOT\bin\dart run inno_bundle:build --sign-tool-params '\"${{ steps.find_signtool.outputs.signtool_path }}\" sign /fd sha256 /f \"C:\Users\runneradmin\certs\Dartotsu.pfx\" /p \"${{secrets.PFX_PASSWORD}}\" /tr http://timestamp.digicert.com /td sha256 /v $f' --release
+          & flutter run inno_bundle:build --sign-tool-params '\"${{ steps.find_signtool.outputs.signtool_path }}\" sign /fd sha256 /f \"C:\Users\runneradmin\certs\Dartotsu.pfx\" /p \"${{secrets.PFX_PASSWORD}}\" /tr http://timestamp.digicert.com /td sha256 /v $f' --release
 
       - name: Upload Windows Installer
         uses: actions/upload-artifact@v4
