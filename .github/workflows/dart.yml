@@ -201,11 +201,11 @@ jobs:
           echo "org.gradle.parallel=true" >> ~/.gradle/gradle.properties
           echo "org.gradle.caching=true" >> ~/.gradle/gradle.properties
 
-      - run: flutter clean
-      - run: flutter pub get
-      - run: dart run build_runner build --delete-conflicting-outputs
-      - run: flutter build apk --debug --split-per-abi
-      - run: flutter build apk --debug
+      - run: $FLUTTER_ROOT/bin/flutter clean
+      - run: $FLUTTER_ROOT/bin/flutter pub get
+      - run: $FLUTTER_ROOT/bin/dart run build_runner build --delete-conflicting-outputs
+      - run: $FLUTTER_ROOT/bin/flutter build apk --debug --split-per-abi
+      - run: $FLUTTER_ROOT/bin/flutter build apk --debug
 
       - name: Rename APKs
         run: |
@@ -289,10 +289,10 @@ jobs:
         with:
           nuget-version: "latest"
       - name: Enable Windows desktop support
-        run: flutter config --enable-windows-desktop
+        run: $env:FLUTTER_ROOT\bin\flutter config --enable-windows-desktop
 
-      - run: flutter clean
-      - run: flutter pub get
+      - run: $env:FLUTTER_ROOT\bin\flutter clean
+      - run: $env:FLUTTER_ROOT\bin\flutter pub get
 
       - name: Extract Version
         id: get_version
@@ -319,7 +319,7 @@ jobs:
 
       - name: Build and Sign Setup
         run: |
-          dart run inno_bundle:build --sign-tool-params '"${{ steps.find_signtool.outputs.signtool_path }}" sign /fd sha256 /f "C:\Users\runneradmin\certs\Dartotsu.pfx" /p "${{secrets.PFX_PASSWORD}}" /tr http://timestamp.digicert.com /td sha256 /v $f' --release
+          & $env:FLUTTER_ROOT\bin\dart run inno_bundle:build --sign-tool-params '\"${{ steps.find_signtool.outputs.signtool_path }}\" sign /fd sha256 /f \"C:\Users\runneradmin\certs\Dartotsu.pfx\" /p \"${{secrets.PFX_PASSWORD}}\" /tr http://timestamp.digicert.com /td sha256 /v $f' --release
 
       - name: Upload File To Google Drive
         id: gdriveUpload
@@ -362,10 +362,10 @@ jobs:
       - *setup_env
 
       - name: Fetch Flutter dependencies
-        run: flutter pub get
+        run: $FLUTTER_ROOT/bin/flutter pub get
 
       - name: Build Flutter Linux app
-        run: flutter build linux
+        run: $FLUTTER_ROOT/bin/flutter build linux
       - name: Archive app
         uses: thedoctor0/zip-release@master
         with:
@@ -405,10 +405,10 @@ jobs:
       - *setup_env
 
       - name: Get Dependencies
-        run: flutter pub get
+        run: $FLUTTER_ROOT/bin/flutter pub get
       - name: Build iOS
         run: |
-          flutter build ios --release --no-codesign
+          $FLUTTER_ROOT/bin/flutter build ios --release --no-codesign
           cd build/ios/iphoneos
           rm -rf Payload
           mkdir -p Payload
@@ -449,9 +449,9 @@ jobs:
       - *cache_flutter_clean
       - *setup_env
       - name: Get Dependencies
-        run: flutter pub get
+        run: $FLUTTER_ROOT/bin/flutter pub get
       - name: Build macOS
-        run: flutter build macos --release
+        run: $FLUTTER_ROOT/bin/flutter build macos --release
       - name: Create DMG file for macOS Build
         run: |
           mkdir -p build/macos/Release
