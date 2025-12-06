@@ -206,54 +206,6 @@ jobs:
           done
           ls build/app/outputs/flutter-apk
 
-      - name: Rename universal APK
-        run: mv build/app/outputs/flutter-apk/app-debug.apk build/app/outputs/flutter-apk/Dantotsu_Android_universal_${{github.ref_name}}.apk
-
-      - name: Prepare Google Key
-        id: prep_google_key
-        shell: bash
-        env:
-          GOOGLE_KEY: ${{ secrets.GOOGLE_KEY }}
-        run: |
-          echo "GOOGLE_KEY_BASE64=$(echo -n "$GOOGLE_KEY" | base64 -w 0)" >> $GITHUB_ENV
-
-      - name: Upload arm64 File To Google Drive
-        id: gdriveUpload_arm64
-        uses: hoatruongdev09/google-drive-file-upload-github-action@v1.1
-        with:
-          file-path: build/app/outputs/flutter-apk/Dartotsu_Android_arm64-v8a_main.apk
-          upload-name: Dartotsu_Android_arm64-v8a_${{github.ref_name}}.apk
-          upload-to-folder-id: ${{secrets.GOOGLE_FOLDER_ANDROID}}
-          service-account-json: "${{ env.GOOGLE_KEY_BASE64 }}"
-          overrwrite: true
-      - name: Upload armeabi File To Google Drive
-        id: gdriveUpload_armeabi
-        uses: hoatruongdev09/google-drive-file-upload-github-action@v1.1
-        with:
-          file-path: build/app/outputs/flutter-apk/Dartotsu_Android_armeabi-v7a_main.apk
-          upload-name: Dartotsu_Android_armeabi-v7a_${{github.ref_name}}.apk
-          upload-to-folder-id: ${{secrets.GOOGLE_FOLDER_ANDROID}}
-          service-account-json: "${{ env.GOOGLE_KEY_BASE64 }}"
-          overrwrite: true
-      - name: Upload x86 File To Google Drive
-        id: gdriveUpload_x86
-        uses: hoatruongdev09/google-drive-file-upload-github-action@v1.1
-        with:
-          file-path: build/app/outputs/flutter-apk/Dartotsu_Android_x86_64_main.apk
-          upload-name: Dartotsu_Android_x86_64_${{github.ref_name}}.apk
-          upload-to-folder-id: ${{secrets.GOOGLE_FOLDER_ANDROID}}
-          service-account-json: "${{ env.GOOGLE_KEY_BASE64 }}"
-          overrwrite: true
-      - name: Upload File To Google Drive
-        id: gdriveUpload_universal
-        uses: hoatruongdev09/google-drive-file-upload-github-action@v1.1
-        with:
-          file-path: build/app/outputs/flutter-apk/Dantotsu_Android_universal_${{github.ref_name}}.apk
-          upload-name: Dartotsu.apk
-          upload-to-folder-id: ${{secrets.GOOGLE_FOLDER_ANDROID}}
-          service-account-json: "${{ env.GOOGLE_KEY_BASE64 }}"
-          overrwrite: true
-
   build_windows:
     runs-on: windows-latest
     if: |
@@ -320,15 +272,13 @@ jobs:
         run: |
           & $env:FLUTTER_ROOT\bin\dart run inno_bundle:build --sign-tool-params '\"${{ steps.find_signtool.outputs.signtool_path }}\" sign /fd sha256 /f \"C:\Users\runneradmin\certs\Dartotsu.pfx\" /p \"${{secrets.PFX_PASSWORD}}\" /tr http://timestamp.digicert.com /td sha256 /v $f' --release
 
-      - name: Upload File To Google Drive
-        id: gdriveUpload
-        uses: hoatruongdev09/google-drive-file-upload-github-action@v1.1
+      - name: Upload Windows Installer
+        uses: actions/upload-artifact@v4
+        if: always()
         with:
-          file-path: build\windows\x64\installer\Release\Dartotsu-x86_64-${{env.version}}-Installer.exe
-          upload-name: Dartotsu_windows.exe
-          upload-to-folder-id: ${{secrets.GOOGLE_FOLDER_MAIN}}
-          service-account-json: "${{secrets.GOOGLE_KEY}}"
-          overrwrite: true
+          name: Dartotsu-x86_64-${{env.version}}-Installer.exe
+          path: build\windows\x64\installer\Release\Dartotsu-x86_64-${{env.version}}-Installer.exe
+          retention-days: 7
 
   build_linux:
     runs-on: ubuntu-latest
@@ -372,24 +322,6 @@ jobs:
           filename: Dartotsu_Linux_${{github.ref_name}}.zip
           directory: build/linux/x64/release/bundle
 
-      - name: Prepare Google Key
-        id: prep_google_key
-        shell: bash
-        env:
-          GOOGLE_KEY: ${{ secrets.GOOGLE_KEY }}
-        run: |
-          echo "GOOGLE_KEY_BASE64=$(echo -n "$GOOGLE_KEY" | base64 -w 0)" >> $GITHUB_ENV
-
-      - name: Upload File To Google Drive
-        id: gdriveUpload
-        uses: hoatruongdev09/google-drive-file-upload-github-action@v1.1
-        with:
-          file-path: build/linux/x64/release/bundle/Dartotsu-Linux-${{ github.ref_name }}.zip
-          upload-name: Dartotsu-Linux-${{ github.ref_name }}.zip
-          upload-to-folder-id: ${{secrets.GOOGLE_FOLDER_MAIN}}
-          service-account-json: "${{ env.GOOGLE_KEY_BASE64 }}"
-          overrwrite: true
-
   build_ios:
     runs-on: macos-latest
     if: |
@@ -423,23 +355,6 @@ jobs:
           cp -R ../Runner.app .
           cd ..
           zip -r Dartotsu-iOS-${{ github.ref_name }}.ipa Payload
-      - name: Prepare Google Key
-        id: prep_google_key
-        shell: bash
-        env:
-          GOOGLE_KEY: ${{ secrets.GOOGLE_KEY }}
-        run: |
-          echo "GOOGLE_KEY_BASE64=$(echo -n "$GOOGLE_KEY" | base64 -w 0)" >> $GITHUB_ENV
-
-      - name: Upload File To Google Drive
-        id: gdriveUpload
-        uses: hoatruongdev09/google-drive-file-upload-github-action@v1.1
-        with:
-          file-path: build/ios/iphoneos/Dartotsu-iOS-${{github.ref_name}}.ipa
-          upload-name: Dartotsu-iOS-${{github.ref_name}}.ipa
-          upload-to-folder-id: ${{secrets.GOOGLE_FOLDER_MAIN}}
-          service-account-json: "${{ env.GOOGLE_KEY_BASE64 }}"
-          overrwrite: true
 
   build_macos:
     runs-on: macos-latest
@@ -472,23 +387,6 @@ jobs:
           mkdir -p build/macos/Release
           hdiutil create -volname "Dartotsu" -srcfolder build/macos/Build/Products/Release/Dartotsu.app -ov -format UDZO build/macos/Release/Dartotsu-macos-${{github.ref_name}}.dmg
         shell: bash
-      - name: Prepare Google Key
-        id: prep_google_key
-        shell: bash
-        env:
-          GOOGLE_KEY: ${{ secrets.GOOGLE_KEY }}
-        run: |
-          echo "GOOGLE_KEY_BASE64=$(echo -n "$GOOGLE_KEY" | base64 -w 0)" >> $GITHUB_ENV
-
-      - name: Upload File To Google Drive
-        id: gdriveUpload
-        uses: hoatruongdev09/google-drive-file-upload-github-action@v1.1
-        with:
-          file-path: build/macos/Release/Dartotsu-macos-${{github.ref_name}}.dmg
-          upload-name: Dartotsu-macos-${{github.ref_name}}.dmg
-          upload-to-folder-id: ${{secrets.GOOGLE_FOLDER_MAIN}}
-          service-account-json: "${{ env.GOOGLE_KEY_BASE64 }}"
-          overrwrite: true
 
   sendMessage:
     runs-on: ubuntu-latest
