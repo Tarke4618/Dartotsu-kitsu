@@ -90,16 +90,16 @@ jobs:
         run: |
           for file in build/app/outputs/flutter-apk/app-*-release.apk; do
             abi=$(basename $file | sed 's/app-\(.*\)-release.apk/\1/')
-            mv $file build/app/outputs/flutter-apk/Dartotsu_Android_${abi}_${{github.ref_name}}.apk
+            mv $file build/app/outputs/flutter-apk/Dartotsu-Kitsu_Android_${abi}_${{github.ref_name}}.apk
           done
           ls build/app/outputs/flutter-apk
       - name: Rename Universal APK
         run: |
-          mv build/app/outputs/flutter-apk/app-release.apk build/app/outputs/flutter-apk/Dartotsu_Android_Universal_${{github.ref_name}}.apk
+          mv build/app/outputs/flutter-apk/app-release.apk build/app/outputs/flutter-apk/Dartotsu-Kitsu_Android_Universal_${{github.ref_name}}.apk
       - name: Android Apk Release
         uses: softprops/action-gh-release@master
         with:
-          files: build/app/outputs/flutter-apk/Dartotsu_Android_*_${{ github.ref_name }}.apk
+          files: build/app/outputs/flutter-apk/Dartotsu-Kitsu_Android_*_${{ github.ref_name }}.apk
 
   build_windows:
     runs-on: windows-latest
@@ -167,7 +167,7 @@ jobs:
       - name: Release Windows Zip
         uses: softprops/action-gh-release@master
         with:
-          files: build/windows/x64/installer/Release/Dartotsu-x86_64-${{env.version}}-Installer.exe
+          files: build/windows/x64/installer/Release/Dartotsu-Kitsu-x86_64-${{env.version}}-Installer.exe
 
   build_linux:
     runs-on: ubuntu-latest
@@ -213,12 +213,12 @@ jobs:
         uses: thedoctor0/zip-release@master
         with:
           type: "zip"
-          filename: Dartotsu_LinuxZip_${{github.ref_name}}.zip
+          filename: Dartotsu-Kitsu_LinuxZip_${{github.ref_name}}.zip
           directory: build/linux/x64/release/bundle
       - name: Release Linux Zip
         uses: softprops/action-gh-release@master
         with:
-          files: build/linux/x64/release/bundle/Dartotsu_LinuxZip_${{github.ref_name}}.zip
+          files: build/linux/x64/release/bundle/Dartotsu-Kitsu_LinuxZip_${{github.ref_name}}.zip
   build_ios:
     runs-on: macos-latest
     permissions:
@@ -256,12 +256,12 @@ jobs:
           cd Payload
           ln -s ../Runner.app
           cd ..
-          zip -r Dartotsu-iOS-${{ github.ref_name }}.ipa Payload
+          zip -r Dartotsu-Kitsu-iOS-${{ github.ref_name }}.ipa Payload
 
       - name: Release Linux Zip
         uses: softprops/action-gh-release@master
         with:
-          files: build/ios/iphoneos/Dartotsu-iOS-${{github.ref_name}}.ipa
+          files: build/ios/iphoneos/Dartotsu-Kitsu-iOS-${{github.ref_name}}.ipa
   build_macos:
     runs-on: macos-latest
     permissions:
@@ -290,12 +290,12 @@ jobs:
       - name: Create DMG file for macOS Build
         run: |
           mkdir -p build/macos/Release
-          hdiutil create -volname "Dartotsu" -srcfolder build/macos/Build/Products/Release/dartotsu.app -ov -format UDZO build/macos/Release/Dartotsu-macos-${{github.ref_name}}.dmg
+          hdiutil create -volname "Dartotsu" -srcfolder build/macos/Build/Products/Release/dartotsu-kitsu.app -ov -format UDZO build/macos/Release/Dartotsu-Kitsu-macos-${{github.ref_name}}.dmg
         shell: bash
       - name: Release macOS Zip
         uses: softprops/action-gh-release@master
         with:
-          files: build/macos/Release/Dartotsu-macos-${{github.ref_name}}.dmg
+          files: build/macos/Release/Dartotsu-Kitsu-macos-${{github.ref_name}}.dmg
 
   post-release-notes:
     runs-on: ubuntu-latest
@@ -461,7 +461,7 @@ jobs:
           LINKS=$(cat asset_links.txt | sort)
 
           # Initialize the message
-          MESSAGE="**Dartotsu ${{github.ref_name}} Downloads:**\n\n"
+          MESSAGE="**Dartotsu-Kitsu ${{github.ref_name}} Downloads:**\n\n"
 
           # Loop through each link and format them
           while IFS= read -r LINK; do

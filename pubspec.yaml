@@ -1,14 +1,14 @@
 name: dartotsu
 description: "An Anilist client"
 
-publish_to: 'none'
+publish_to: "none"
 
 # Application version and build number
 version: 0.0.3+1
 
 # Dart SDK constraints
 environment:
-  sdk: '>=3.4.3 <4.0.0'
+  sdk: ">=3.4.3 <4.0.0"
 
 # Main dependencies
 dependencies:
@@ -102,8 +102,8 @@ dependencies:
   collection: ^1.19.1
   flutter_web_auth_2: ^5.0.0-alpha.0
   dartotsu_extension_bridge:
-   # path: ../DartotsuExtensionBridge
-   git:
+    # path: ../DartotsuExtensionBridge
+    git:
       url: https://github.com/aayush2622/DartotsuExtensionBridge.git
       ref: master
   string_similarity: ^2.1.1
@@ -175,7 +175,7 @@ inno_bundle:
     command: $p
   id: 609d9fb9-ac99-533b-a5b5-f277afa99b68
   publisher: Ankit Grai
-  name: Dartotsu
+  name: Dartotsu-Kitsu
   version: 0.0.3
   admin: auto
   installer_icon: assets/images/lol.ico

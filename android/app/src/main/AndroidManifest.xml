@@ -23,7 +23,7 @@
         android:name="${applicationName}"
         android:banner="@mipmap/ic_banner_foreground"
         android:icon="@mipmap/ic_launcher"
-        android:label="Dartotsu"
+        android:label="Dartotsu-Kitsu"
         android:requestLegacyExternalStorage="true"
         android:roundIcon="@mipmap/ic_launcher_round">
         <activity

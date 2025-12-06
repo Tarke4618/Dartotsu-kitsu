@@ -16,7 +16,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:install_plugin/install_plugin.dart';
 
 class AppUpdater {
-  final mainRepo = 'aayush2622/Dartotsu';
+  final mainRepo = 'Tarke4618/Dartotsu-kitsu';
   final alphaRepo = 'grayankit/Dartotsu-Downloader';
 
   late bool checkForUpdates;
