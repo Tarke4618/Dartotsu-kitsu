@@ -59,6 +59,7 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
+          cache: true
 
       - &cache_flutter_normal
         name: Cache Flutter dependencies (normal)
