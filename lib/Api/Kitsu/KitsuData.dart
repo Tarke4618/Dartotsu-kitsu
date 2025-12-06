@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../Functions/Function.dart';
 import '../../Preferences/PrefManager.dart';
@@ -220,7 +221,7 @@ class KitsuController extends BaseServiceData {
                   style: TextStyle(fontSize: 12),
                 ),
                 InkWell(
-                  onTap: () => launchUrl('https://kitsu.io/settings/apps'),
+                  onTap: () => launchUrl(Uri.parse('https://kitsu.io/settings/apps')),
                   child: Text(
                     'kitsu.io/settings/apps',
                     style: TextStyle(
@@ -366,7 +367,7 @@ class KitsuController extends BaseServiceData {
             const Text('4. Paste it below and click "Complete"'),
             const SizedBox(height: 16),
             ElevatedButton.icon(
-              onPressed: () => launchUrl(authUrl),
+              onPressed: () => launchUrl(Uri.parse(authUrl)),
               icon: const Icon(Icons.open_in_browser),
               label: const Text('Open Browser'),
             ),
