@@ -157,6 +157,11 @@ jobs:
             ~/.gradle/caches
             ~/.gradle/wrapper
           key: clean-v1-${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: clean-v1-${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
 
       - name: Setup cmake
         uses: jwlawson/actions-setup-cmake@v2
