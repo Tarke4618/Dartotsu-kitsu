@@ -65,8 +65,9 @@ jobs:
         name: Add Flutter to PATH
         shell: bash
         run: |
-          echo "$FLUTTER_ROOT/bin" >> $GITHUB_PATH
-          echo "$PUB_CACHE/bin" >> $GITHUB_PATH
+          echo "${{ steps.setup-flutter.outputs.flutter-root }}/bin" >> $GITHUB_PATH
+          echo "${{ steps.setup-flutter.outputs.pub-cache-path }}/bin" >> $GITHUB_PATH
+          echo "Flutter root: ${{ steps.setup-flutter.outputs.flutter-root }}"
 
       - &cache_flutter_normal
         name: Cache Flutter dependencies (normal)
@@ -120,7 +121,11 @@ jobs:
       - *checkout
       - *prepare_flutter
       - *setup_flutter
-      - *add_flutter_to_path
+      - name: Add Flutter to PATH
+        shell: bash
+        run: |
+          echo "/opt/hostedtoolcache/flutter/stable-${{ env.FLUTTER_VERSION }}-x64/bin" >> $GITHUB_PATH
+          echo "/home/runner/.pub-cache/bin" >> $GITHUB_PATH
       - *cache_flutter_normal
       - *cache_flutter_clean
 
@@ -273,7 +278,10 @@ jobs:
       - *setup_env
       - *prepare_flutter
       - *setup_flutter
-      - *add_flutter_to_path
+      - name: Add Flutter to PATH
+        shell: pwsh
+        run: |
+          echo "C:\hostedtoolcache\windows\flutter\stable-${{ env.FLUTTER_VERSION }}\x64\bin" >> $env:GITHUB_PATH
       - *cache_flutter_normal
       - *cache_flutter_clean
       - name: Setup NuGet.exe for use with actions
@@ -338,7 +346,11 @@ jobs:
       - *checkout
       - *prepare_flutter
       - *setup_flutter
-      - *add_flutter_to_path
+      - name: Add Flutter to PATH
+        shell: bash
+        run: |
+          echo "/opt/hostedtoolcache/flutter/stable-${{ env.FLUTTER_VERSION }}-x64/bin" >> $GITHUB_PATH
+          echo "/home/runner/.pub-cache/bin" >> $GITHUB_PATH
 
       - name: Install system dependencies
         run: |
@@ -384,7 +396,10 @@ jobs:
       - *checkout
       - *prepare_flutter
       - *setup_flutter
-      - *add_flutter_to_path
+      - name: Add Flutter to PATH
+        shell: bash
+        run: |
+          echo "$HOME/hostedtoolcache/flutter/stable-${{ env.FLUTTER_VERSION }}-x64/bin" >> $GITHUB_PATH
       - *cache_flutter_normal
       - *cache_flutter_clean
       - *setup_env
@@ -426,7 +441,10 @@ jobs:
       - *checkout
       - *prepare_flutter
       - *setup_flutter
-      - *add_flutter_to_path
+      - name: Add Flutter to PATH
+        shell: bash
+        run: |
+          echo "$HOME/hostedtoolcache/flutter/stable-${{ env.FLUTTER_VERSION }}-x64/bin" >> $GITHUB_PATH
       - *cache_flutter_normal
       - *cache_flutter_clean
       - *setup_env
