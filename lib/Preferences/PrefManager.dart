@@ -20,6 +20,7 @@ import 'IsarDataClasses/DefaultPlayerSettings/DefaultPlayerSettings.dart';
 import 'IsarDataClasses/DefaultReaderSettings/DafaultReaderSettings.dart';
 import 'IsarDataClasses/KeyValue/KeyValues.dart';
 import 'IsarDataClasses/MalToken/MalToken.dart';
+import 'IsarDataClasses/TrackerMapping/TrackerMapping.dart';
 
 part 'Preferences.dart';
 
@@ -97,7 +98,8 @@ class PrefManager {
         MSourceSchema,
         SourcePreferenceSchema,
         SourcePreferenceStringValueSchema,
-        BridgeSettingsSchema
+        BridgeSettingsSchema,
+        TrackerMappingSchema,
       ],
       directory: directory,
       name: name,

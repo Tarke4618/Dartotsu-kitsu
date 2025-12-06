@@ -2,6 +2,7 @@ import 'package:dartotsu/DataClass/Media.dart';
 import 'package:dartotsu/Functions/Function.dart';
 import 'package:dartotsu/Functions/string_extensions.dart';
 import 'package:dartotsu/Services/Api/Mutations.dart';
+import 'package:dartotsu/Services/BridgeSyncService.dart';
 import 'package:flutter/cupertino.dart';
 
 import 'Anilist.dart';
@@ -26,8 +27,16 @@ class AnilistMutations extends Mutations {
   AnilistMutations(this.executeQuery);
 
   @override
-  Future<void> editList(Media media, {List<String>? customList}) =>
-      _editList(media, customList: customList);
+  Future<void> editList(Media media, {List<String>? customList}) async {
+    await _editList(media, customList: customList);
+    // Trigger bridge sync in background
+    BridgeSyncService.instance.syncProgress(
+      sourceTracker: 'anilist',
+      sourceId: media.id,
+      newProgress: media.userProgress ?? 0,
+      mediaType: media.anime != null ? 'anime' : 'manga',
+    );
+  }
 
   @override
   Future<void> deleteFromList(Media media) => _deleteFromList(media);

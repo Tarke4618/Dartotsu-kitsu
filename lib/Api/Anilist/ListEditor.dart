@@ -1,4 +1,5 @@
 import 'package:dartotsu/Adaptor/Settings/SettingsAdaptor.dart';
+import 'package:dartotsu/Widgets/ManualLinkDialog.dart';
 import 'package:expandable_widgets/expandable_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -150,9 +151,26 @@ class _ListEditorDialogState extends State<ListEditorDialog> {
     TextStyle labelStyle,
     TextStyle suffixStyle,
   ) {
+    var theme = Theme.of(context).colorScheme;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        const SizedBox(height: 8),
+        // Link External Source button (Bridge Sync)
+        TextButton.icon(
+          onPressed: () => _showLinkExternalDialog(),
+          icon: Icon(Icons.link, color: theme.primary, size: 20),
+          label: Text(
+            'Link External Source',
+            style: TextStyle(
+              color: theme.primary,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          style: TextButton.styleFrom(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          ),
+        ),
         const SizedBox(height: 8),
         TextField(
           controller: repeatController,
@@ -420,5 +438,11 @@ class _ListEditorDialogState extends State<ListEditorDialog> {
     await Anilist.mutations?.deleteFromList(widget.media);
     Refresh.activity[RefreshId.Anilist.homePage]?.value = true;
     Refresh.activity[widget.media.id]?.value = true;
+  }
+
+  void _showLinkExternalDialog() {
+    // Close the current dialog first, then show the link dialog
+    Get.back();
+    showManualLinkDialog(context, widget.media);
   }
 }

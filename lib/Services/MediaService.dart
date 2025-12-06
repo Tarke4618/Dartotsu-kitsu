@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../Api/Anilist/AnilistService.dart';
 import '../Api/Extensions/ExtensionsService.dart';
+import '../Api/Kitsu/KitsuService.dart';
 import '../Api/MyAnimeList/MalService.dart';
 import '../DataClass/Media.dart';
 import '../Screens/HomeNavBar.dart';
@@ -71,5 +72,6 @@ abstract class MediaService {
     MalService();
     SimklService();
     ExtensionsService();
+    KitsuService();
   }
 }
