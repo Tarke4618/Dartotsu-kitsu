@@ -134,6 +134,18 @@ jobs:
             ~/.gradle/caches
             ~/.gradle/wrapper
           key: clean-v1-${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+
+      # Free up disk space to prevent "No space left on device" error
+      - name: Free Disk Space
+        run: |
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /opt/ghc
+          sudo rm -rf /usr/local/share/boost
+          sudo rm -rf "$AGENT_TOOLSDIRECTORY"
+          sudo rm -rf /usr/local/lib/android/sdk/ndk
+          sudo apt-get clean
+          df -h
+
       - name: Setup cmake
         uses: jwlawson/actions-setup-cmake@v2
         with:
