@@ -211,8 +211,6 @@ jobs:
     if: |
       (github.event_name == 'push' && (contains(github.event.head_commit.message, '[build.windows]') || contains(github.event.head_commit.message, '[build.all]'))) ||
       (github.event_name == 'workflow_dispatch' && (inputs.build_targets == 'windows' || inputs.build_targets == 'all'))
-    outputs:
-      zip_link: ${{steps.gdriveUpload.outputs.web-content-link}}
 
     permissions:
       contents: write
@@ -289,8 +287,7 @@ jobs:
       contents: write
       pull-requests: write
       repository-projects: write
-    outputs:
-      zip_link: ${{steps.gdriveUpload.outputs.web-content-link}}
+
     steps:
       - *checkout
       - *prepare_flutter
@@ -329,8 +326,7 @@ jobs:
       (github.event_name == 'workflow_dispatch' && (inputs.build_targets == 'ios' || inputs.build_targets == 'all'))
     permissions:
       contents: write
-    outputs:
-      ipa_link: ${{steps.gdriveUpload.outputs.web-content-link}}
+
     steps:
       - *checkout
       - *prepare_flutter
@@ -365,8 +361,7 @@ jobs:
       contents: write
       pull-requests: write
       repository-projects: write
-    outputs:
-      deb_link: ${{steps.gdriveUpload.outputs.web-content-link}}
+
     steps:
       - *checkout
       - *prepare_flutter
