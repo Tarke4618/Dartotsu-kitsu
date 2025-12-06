@@ -108,32 +108,7 @@ jobs:
 
     steps:
       - *checkout
-      - *prepare_flutter
-      - *setup_flutter
-      - name: Add Flutter to PATH
-        shell: bash
-        run: |
-          echo "/opt/hostedtoolcache/flutter/stable-${{ env.FLUTTER_VERSION }}-x64/bin" >> $GITHUB_PATH
-          echo "/home/runner/.pub-cache/bin" >> $GITHUB_PATH
-      - *cache_flutter_normal
-      - *cache_flutter_clean
-
-      - name: Cache Gradle dependencies (normal)
-        if: ${{ !contains(github.event.head_commit.message, '[clean]') && !inputs.clean_build }}
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: v1-${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            v1-${{ runner.os }}-gradle-
-            clean-v1-${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-      - name: Cache Gradle dependencies (clean)
-        if: contains(github.event.head_commit.message, '[clean]') || inputs.clean_build
-        uses: actions/cache@v4
-
-      # Free up disk space to prevent "No space left on device" error
+      # Free up disk space FIRST to prevent "No space left on device" error
       - name: Free Disk Space
         run: |
           sudo rm -rf /usr/share/dotnet
@@ -154,10 +129,15 @@ jobs:
           sudo apt-get clean
           sudo apt-get autoremove -y
           df -h
-
+      - *prepare_flutter
+      - *setup_flutter
+      - name: Add Flutter to PATH
+        shell: bash
+        run: |
+          echo "/opt/hostedtoolcache/flutter/stable-${{ env.FLUTTER_VERSION }}-x64/bin" >> $GITHUB_PATH
+          echo "/home/runner/.pub-cache/bin" >> $GITHUB_PATH
       - *cache_flutter_normal
       - *cache_flutter_clean
-
       - name: Cache Gradle dependencies (normal)
         if: ${{ !contains(github.event.head_commit.message, '[clean]') && !inputs.clean_build }}
         uses: actions/cache@v4
@@ -295,7 +275,7 @@ jobs:
 
       - name: Build and Sign Setup
         run: |
-          & flutter run inno_bundle:build --sign-tool-params '\"${{ steps.find_signtool.outputs.signtool_path }}\" sign /fd sha256 /f \"C:\Users\runneradmin\certs\Dartotsu.pfx\" /p \"${{secrets.PFX_PASSWORD}}\" /tr http://timestamp.digicert.com /td sha256 /v $f' --release
+          & dart run inno_bundle:build --sign-tool-params '\"${{ steps.find_signtool.outputs.signtool_path }}\" sign /fd sha256 /f \"C:\Users\runneradmin\certs\Dartotsu.pfx\" /p \"${{secrets.PFX_PASSWORD}}\" /tr http://timestamp.digicert.com /td sha256 /v $f' --release
 
       - name: Upload Windows Installer
         uses: actions/upload-artifact@v4

@@ -187,7 +187,7 @@ jobs:
 
       - name: Build and Sign Setup
         run: |
-          & flutter run inno_bundle:build --sign-tool-params '\"${{ steps.find_signtool.outputs.signtool_path }}\" sign /fd sha256 /f \"C:\Users\runneradmin\certs\Dartotsu.pfx\" /p \"${{secrets.PFX_PASSWORD}}\" /tr http://timestamp.digicert.com /td sha256 /v $f' --release
+          & dart run inno_bundle:build --release
       - name: Release Windows Zip
         uses: softprops/action-gh-release@master
         with:
