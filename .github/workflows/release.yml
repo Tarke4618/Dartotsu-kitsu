@@ -45,6 +45,9 @@ jobs:
           sudo rm -rf /usr/local/.ghcup
           sudo rm -rf /usr/local/share/powershell
           sudo rm -rf /usr/share/miniconda
+          sudo rm -rf /usr/lib/google-cloud-sdk
+          sudo rm -rf /opt/hostedtoolcache
+          sudo docker image prune --all --force
           sudo rm -rf /usr/local/lib/android/sdk/build-tools/33.0.0
           sudo rm -rf /usr/local/lib/android/sdk/build-tools/33.0.1
           sudo rm -rf /usr/local/lib/android/sdk/build-tools/33.0.2
@@ -58,7 +61,7 @@ jobs:
         uses: jwlawson/actions-setup-cmake@v2
         with:
           cmake-version: "3.18.1"
-      # Install Ninaja
+      # Install Ninja
       - name: Install system dependencies
         run: |
           sudo apt-get update -y
@@ -356,7 +359,7 @@ jobs:
       contents: read
     needs: [generate-changelog]
     steps:
-      - name: Cloing repository
+      - name: Cloning repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0

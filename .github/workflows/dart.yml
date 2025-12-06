@@ -101,9 +101,6 @@ jobs:
     if: |
       (github.event_name == 'push' && (contains(github.event.head_commit.message, '[build.apk]') || contains(github.event.head_commit.message, '[build]') || contains(github.event.head_commit.message, '[build.all]'))) ||
       (github.event_name == 'workflow_dispatch' && (inputs.build_targets == 'android' || inputs.build_targets == 'all'))
-    outputs:
-      apk_link: ${{steps.gdriveUpload_arm64.outputs.web-content-link}}
-
     permissions:
       contents: write
       pull-requests: read
@@ -152,6 +149,9 @@ jobs:
           sudo rm -rf /usr/local/.ghcup
           sudo rm -rf /usr/local/share/powershell
           sudo rm -rf /usr/share/miniconda
+          sudo rm -rf /usr/lib/google-cloud-sdk
+          sudo rm -rf /opt/hostedtoolcache
+          sudo docker image prune --all --force
           sudo rm -rf /usr/local/lib/android/sdk/build-tools/33.0.0
           sudo rm -rf /usr/local/lib/android/sdk/build-tools/33.0.1
           sudo rm -rf /usr/local/lib/android/sdk/build-tools/33.0.2
