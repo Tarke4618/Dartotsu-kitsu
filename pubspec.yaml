@@ -171,8 +171,6 @@ flutter_icons:
     image_path: "assets/images/logo.png"
 
 inno_bundle:
-  sign_tool:
-    command: $p
   id: 609d9fb9-ac99-533b-a5b5-f277afa99b68
   publisher: Ankit Grai
   name: Dartotsu-Kitsu
