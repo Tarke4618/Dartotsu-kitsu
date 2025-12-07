@@ -149,12 +149,6 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-flutter-
 
-      - name: Set up Signing Tool
-        env:
-          PFX_BASE64: ${{ secrets.PFX_FILE }}
-        run: |
-          mkdir $env:USERPROFILE\certs
-          [System.IO.File]::WriteAllBytes("$env:USERPROFILE\certs\Dartotsu.pfx", [Convert]::FromBase64String($env:PFX_BASE64))
       # Create .env:
       - name: Setup env File
         env:
@@ -187,32 +181,9 @@ jobs:
           $version = (Get-Content pubspec.yaml | Select-String -Pattern 'version: ([\d.]+)').Matches.Groups[1].Value
           echo "version=$version" >> $env:GITHUB_ENV
 
-      - name: Find Latest SignTool Path
-        id: find_signtool
-        shell: pwsh
+      - name: Build Windows Installer (Unsigned)
         run: |
-          $sdkBins = Get-ChildItem "C:\Program Files (x86)\Windows Kits\10\bin" -Directory | 
-                     Where-Object { $_.Name -match '^\d+\.\d+\.\d+\.\d+$' } |  
-                     Sort-Object Name -Descending | 
-                     Select-Object -First 1
-          if (-not $sdkBins) {
-            throw "No Windows SDK bin directories found!"
-          }
-          $signtoolPath = Join-Path $sdkBins.FullName "x64\signtool.exe"
-          if (-not (Test-Path $signtoolPath)) {
-            throw "signtool.exe not found at $signtoolPath"
-          }
-          echo "signtool_path=$signtoolPath" >> $env:GITHUB_OUTPUT
-
-      - name: Build and Sign Setup
-        env:
-          PFX_PASSWORD: ${{ secrets.PFX_PASSWORD }}
-        run: |
-          $signtool = "${{ steps.find_signtool.outputs.signtool_path }}"
-          $cert = "C:\Users\runneradmin\certs\Dartotsu.pfx"
-          $pass = $env:PFX_PASSWORD
-          $params = "`"$signtool`" sign /fd sha256 /f `"$cert`" /p `"$pass`" /tr http://timestamp.digicert.com /td sha256 /v `$f"
-          & dart run inno_bundle:build --sign-tool-params $params --release
+          & dart run inno_bundle:build --release
       - name: Release Windows Zip
         uses: softprops/action-gh-release@master
         with:
