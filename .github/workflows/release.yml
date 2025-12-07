@@ -176,10 +176,10 @@ jobs:
       - name: Enable Windows desktop support
         run: flutter config --enable-windows-desktop
 
-      - run: $env:FLUTTER_ROOT\bin\flutter clean
+      - run: '& "$env:FLUTTER_ROOT\bin\flutter" clean'
 
       # Get dependencies with cached packages
-      - run: $env:FLUTTER_ROOT\bin\flutter pub get
+      - run: '& "$env:FLUTTER_ROOT\bin\flutter" pub get'
 
       - name: Extract Version
         id: get_version
